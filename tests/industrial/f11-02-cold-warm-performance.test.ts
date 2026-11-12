@@ -651,6 +651,7 @@ describe('F11-02: Cold/Warm Performance Suite', () => {
       try {
         const { execSync } = await import('child_process');
         execSync('docker info', { stdio: 'ignore' });
+        execSync('docker image inspect maos-sandbox-runner:0.3.0-industrial', { stdio: 'ignore' });
         dockerAvailable = true;
       } catch {
         dockerAvailable = false;

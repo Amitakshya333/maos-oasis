@@ -60,8 +60,8 @@
       "name": "MAOS Rust Industrial Authority Engine",
       "version": "0.1.0",
       "relativePath": "rust/target/release/maos-engine.exe",
-      "sha256": "700aacac2fe26969e9ad9aaa47000ed7836ffa935a9a71270ec50f9cdfb318ff",
-      "size": 472064,
+      "sha256": "d33f01d22b4272ad5221d469c98b44b2c73a6946c8cb683920cd7b026dfd27e2",
+      "size": 462848,
       "license": "MIT OR Apache-2.0",
       "isExecutable": true,
       "isRemote": false
@@ -247,5 +247,5 @@
       "isRemote": false
     }
   },
-  "entriesHash": "71df5da73b8c9da8be9b0f77b8cfbaab68b242b437c538dd3d449d12791cbdf7"
+  "entriesHash": "868fc7132932a512c3173ee62efb54545f29005bc77655cc971c0242145c8baf"
 }

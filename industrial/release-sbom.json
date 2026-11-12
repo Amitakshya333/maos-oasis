@@ -24,8 +24,8 @@
       "name": "MAOS Project Service Runtime",
       "version": "0.4.0",
       "relativePath": "dist/service/index.js",
-      "sha256": "8364527221b2bb530bff05e2849eb71f245bdc08f0e901b76b6bf774b4c9aa13",
-      "size": 42398,
+      "sha256": "698981f5a21a0ddb338b6db209065651879d6ed8620303325e1fedee4fb81846",
+      "size": 43657,
       "license": "MIT",
       "isExecutable": false,
       "isRemote": false
@@ -247,5 +247,5 @@
       "isRemote": false
     }
   },
-  "entriesHash": "868fc7132932a512c3173ee62efb54545f29005bc77655cc971c0242145c8baf"
+  "entriesHash": "01b3d726464ea74f8933605b45167abe5733cc2cb0bd126f11b87409827cdc9a"
 }

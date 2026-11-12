@@ -56,7 +56,10 @@ const dockerAvailable = isDockerAvailable();
 describe('F8-05: Sovereign RMS Coding Demo', () => {
   const csvContent = fs.readFileSync(path.join(__dirname, '../../demo/industrial/turbine_vibration_log.csv'), 'utf8');
   const rmsScript = fs.readFileSync(path.join(__dirname, '../../fixtures/f8-05/rms-calculation.py'), 'utf8');
-  const verificationScript = fs.readFileSync(path.join(__dirname, '../../fixtures/f8-05/rms-verification-test.py'), 'utf8');
+  const verificationScript = fs.readFileSync(
+    path.join(__dirname, '../../fixtures/f8-05/rms-verification-test.py'),
+    'utf8',
+  );
 
   const csvHash = crypto.createHash('sha256').update(csvContent).digest('hex');
   const scriptHash = crypto.createHash('sha256').update(rmsScript).digest('hex');
@@ -80,7 +83,10 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
         expect(parsed.warning_count).toBe(EXPECTED_WARNING_COUNT);
         expect(parsed.critical_count).toBe(EXPECTED_CRITICAL_COUNT);
         expect(parsed.row_count).toBe(EXPECTED_ROW_COUNT);
-        expect(parsed.warning_rows).toEqual([[121, 5.2], [367, 8.3]]);
+        expect(parsed.warning_rows).toEqual([
+          [121, 5.2],
+          [367, 8.3],
+        ]);
         expect(parsed.critical_rows).toEqual([[367, 8.3]]);
       } finally {
         fs.rmSync(tempDir, { recursive: true, force: true });
@@ -217,7 +223,7 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
 
     it('rejects when verification test fails with wrong data', () => {
       if (!dockerAvailable) return;
-      const mutatedCsv = csvContent.replace('5.2', '50.2');
+      const mutatedCsv = csvContent.replace(',5.2,', ',50.2,');
       const failResult = executeCodeSandboxTool(
         {
           script: verificationScript,
@@ -237,9 +243,8 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
       if (!dockerAvailable) return;
       const auditService = services.audit;
       const events = auditService.getRecords ? auditService.getRecords({ category: 'tool' }) : [];
-      const sandboxEvents = events.filter((e: any) =>
-        e.source === 'sandbox-runner' ||
-        e.source === 'sandbox-runner-service'
+      const sandboxEvents = events.filter(
+        (e: any) => e.source === 'sandbox-runner' || e.source === 'sandbox-runner-service',
       );
       expect(sandboxEvents.length).toBeGreaterThan(0);
       for (const evt of sandboxEvents) {
@@ -338,7 +343,8 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
     });
 
     it('static security inspection detects and flags network socket attempts', () => {
-      const socketScript = 'import socket\ns = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\ns.connect(("1.1.1.1", 80))';
+      const socketScript =
+        'import socket\ns = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\ns.connect(("1.1.1.1", 80))';
       const insp = inspectScriptForSandboxViolations(socketScript);
       expect(insp.safe).toBe(false);
       expect(insp.violations.length).toBeGreaterThan(0);
@@ -362,4 +368,3 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
     });
   });
 });
-

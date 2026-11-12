@@ -66,7 +66,8 @@ export function resolveEvidencePath(
   }
   const stat = fs.statSync(realCandidate);
   if (!stat.isFile()) throw new Error(`EVIDENCE_NOT_FILE: not a file under the evidence root: ${requested}`);
-  return { abs: realCandidate, rel: path.relative(projectRoot, realCandidate).split(path.sep).join('/') };
+  const realProjectRoot = fs.existsSync(projectRoot) ? fs.realpathSync(projectRoot) : projectRoot;
+  return { abs: realCandidate, rel: path.relative(realProjectRoot, realCandidate).split(path.sep).join('/') };
 }
 
 /** Save a buffer/string under the run artifact dir; returns the descriptor. */
@@ -77,7 +78,11 @@ export function saveRunArtifact(
   content: string | Buffer,
   kind: string,
 ): RingArtifactDescriptor {
-  const safe = path.basename(filename).replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^\.+/, '') || 'artifact.bin';
+  const safe =
+    path
+      .basename(filename)
+      .replace(/[^a-zA-Z0-9._-]+/g, '_')
+      .replace(/^\.+/, '') || 'artifact.bin';
   const dir = path.resolve(projectRoot, '.maos', 'ring-runs', 'artifacts', runId);
   fs.mkdirSync(dir, { recursive: true });
   const abs = path.join(dir, safe);
@@ -93,7 +98,11 @@ export function saveRunArtifact(
 }
 
 /** Read a small evidence text file with a byte cap; CSV bodies are refused. */
-export function readEvidenceText(abs: string, rel: string, maxBytes = 256 * 1024): { text: string; bytes: number; sha256: string; refusedCsv: boolean } {
+export function readEvidenceText(
+  abs: string,
+  rel: string,
+  maxBytes = 256 * 1024,
+): { text: string; bytes: number; sha256: string; refusedCsv: boolean } {
   const stat = fs.statSync(abs);
   if (stat.size > maxBytes) {
     throw new Error(`EVIDENCE_TOO_LARGE: file exceeds the ${maxBytes}-byte read limit: ${rel}`);

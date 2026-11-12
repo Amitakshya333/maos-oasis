@@ -143,13 +143,25 @@ export function validateProjectFolder(
 
   // Check if realpath differed from resolved path due to symlink escape
   if (!options.allowSymlinks) {
-    const directResolved = path.resolve(rawPath);
-    if (directResolved.toLowerCase() !== canonicalPath.toLowerCase()) {
-      return {
-        valid: false,
-        code: 'SYMLINK_PROJECT_ROOT_FORBIDDEN',
-        message: `Project path '${rawPath}' resolves to a different canonical path ('${canonicalPath}') via symbolic link.`,
-      };
+    try {
+      const parentCanonical = fs.realpathSync(path.dirname(rawPath));
+      const expectedCanonical = path.resolve(parentCanonical, path.basename(rawPath));
+      if (expectedCanonical.toLowerCase() !== canonicalPath.toLowerCase()) {
+        return {
+          valid: false,
+          code: 'SYMLINK_PROJECT_ROOT_FORBIDDEN',
+          message: `Project path '${rawPath}' resolves to a different canonical path ('${canonicalPath}') via symbolic link.`,
+        };
+      }
+    } catch {
+      const directResolved = path.resolve(rawPath);
+      if (directResolved.toLowerCase() !== canonicalPath.toLowerCase()) {
+        return {
+          valid: false,
+          code: 'SYMLINK_PROJECT_ROOT_FORBIDDEN',
+          message: `Project path '${rawPath}' resolves to a different canonical path ('${canonicalPath}') via symbolic link.`,
+        };
+      }
     }
   }
 
@@ -219,7 +231,12 @@ export function validateProjectFolder(
     const configLinkStat = fs.lstatSync(configPath);
     const canonicalConfigPath = fs.realpathSync(configPath);
     const configRelative = path.relative(maosDir, canonicalConfigPath);
-    if (configLinkStat.isSymbolicLink() || !configRelative || configRelative.startsWith('..') || path.isAbsolute(configRelative)) {
+    if (
+      configLinkStat.isSymbolicLink() ||
+      !configRelative ||
+      configRelative.startsWith('..') ||
+      path.isAbsolute(configRelative)
+    ) {
       return {
         valid: false,
         code: 'SYMLINK_PROJECT_CONFIG_FORBIDDEN',

@@ -31,6 +31,7 @@ import { inspectScriptForSandboxViolations } from '../../src/domain/sandbox';
 function isDockerAvailable(): boolean {
   try {
     execSync('docker info', { stdio: 'ignore' });
+    execSync('docker image inspect maos-sandbox-runner:0.3.0-industrial', { stdio: 'ignore' });
     return true;
   } catch {
     return false;
@@ -231,7 +232,7 @@ describe('F8-05: Sovereign RMS Coding Demo', () => {
             'turbine_vibration_log.csv': mutatedCsv,
             'rms-calculation.py': rmsScript,
           },
-          requestId: 'f8-05-reject-wrong-data-001',
+          requestId: 'f8-05-reject-wrong-data-v2',
         },
         context,
         services,

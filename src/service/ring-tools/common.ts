@@ -88,7 +88,16 @@ export function saveRunArtifact(
   const abs = path.join(dir, safe);
   const buf = typeof content === 'string' ? Buffer.from(content, 'utf-8') : content;
   fs.writeFileSync(abs, buf);
-  const rel = path.relative(projectRoot, abs).split(path.sep).join('/');
+  let realProjectRoot: string;
+  let realAbs: string;
+  try {
+    realProjectRoot = fs.realpathSync(projectRoot);
+    realAbs = fs.realpathSync(abs);
+  } catch {
+    realProjectRoot = path.resolve(projectRoot);
+    realAbs = abs;
+  }
+  const rel = path.relative(realProjectRoot, realAbs).split(path.sep).join('/');
   return {
     path: rel,
     kind,
